@@ -1,0 +1,30 @@
+.legend {
+  color: #737373;
+  font-style: italic;
+  font-size: 11pt;
+  line-height: 1.25;
+}
+
+.scroll-100 {
+  max-height: 50px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+
+h1 {
+  font-size: 16;
+  font-weight: bold;
+  color: #417a8b;
+}
+
+h1 {
+  font-size: 14;
+  font-weight: bold;
+  color: #417a8b;
+}
+
+h2 {
+  font-size: 12;
+  font-weight: bold;
+  color: Gray;
+}

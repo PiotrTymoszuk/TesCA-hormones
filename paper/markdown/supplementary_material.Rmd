@@ -1,0 +1,655 @@
+---
+title: "Biological and clinical significance of sex hormone-related gene expression in testicular cancer"
+subtitle: "Supplementary Material"
+author: "Department of Urology, Medical University of Innsbruck"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+
+output: 
+  bookdown::html_document2:
+    css: "style.css"
+    
+bibliography: tesca.bib
+
+csl: frontiers_medical.csl
+
+header-includes:
+  \usepackage{longtable}
+  \usepackage{tabu}
+  \usepackage{caption}
+  \usepackage{makecell}
+  \usepackage{pdflscape}
+  \usepackage{array}
+  \usepackage{booktabs}
+  \usepackage{threeparttable}
+  \usepackage{threeparttablex}
+  \usepackage{wrapfig}
+  \usepackage{multirow}
+  \usepackage[normalem]{ulem}
+  \usepackage{colortbl}
+  \usepackage{xcolor}
+  \usepackage{float} \floatplacement{figure}{H} \floatplacement{table}{H}
+
+---
+
+```{r, setup, include = FALSE}
+
+library(Cairo)
+
+opts_chunk$set(echo = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      dev = "cairo_pdf", 
+                      dpi = 600)
+
+set_flextable_defaults(font.family = "Cambria", 
+                       font.size = 10)
+
+
+```
+
+\newpage
+
+# Supplementary Methods
+
+\newpage
+
+# Data and code availability
+
+Data from publicly available sources were analyzed. 
+The R analysis pipeline is available as a [GitHub repository](https://github.com/PiotrTymoszuk/TesCa TCGA)
+
+\newpage
+
+# Supplementary Tables
+
+```{r tab-histology, tab.cap = 'Differential expression of hormone-related genes in seminoma and NGSCT in the TCGA and GSE99420 cohorts. Log2-transformed expression levels are presented as medians with interquartile ranges and ranges. Significant effects are shown. The full table is available as a supplementary Excel table.'}
+
+suppl_tabs$histology %>% 
+  filter(!stri_detect(Significance, regex = '^ns') | is.na(Significance)) %>% 
+  flextable %>% 
+  set_widths(c(2.2, 2, rep(3.7, 2), 2.5, 2.2)) %>% 
+  merge_v(1) %>% 
+  italic(2:(1 + 28), j = 2, part = 'body') %>% 
+  italic(31:(30 + 8), j = 2, part = 'body') %>% 
+  footnote(1, 5:6, 
+           value = as_paragraph('Mann-Whitney test with r effect size statistic. P values adjusted for multiple testing with the false discovery rate method.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-histology-icd, tab.cap = 'Expression of hormone-related genes in testicular cancers of the TCGA cohort stratified by ICD-O histological subtypes. Log2-transformed expression levels are presented as medians with interquartile ranges and ranges.'}
+
+suppl_tabs$histology_icd %>% 
+  compact_tbl %>% 
+  flextable %>% 
+  set_widths(c(2, rep(2.7, 5), 2.3, 2)) %>% 
+  italic(i = 2:35, j = 1, part = 'body') %>% 
+  footnote(1, 2:6, 
+           value = as_paragraph('SEM: seminoma; MGCT: mixed germ cell tumor; EMBCA: embronal carcinoma; TT: teratoma and teratocarcinoma; TYST: yolk sac tumor.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  footnote(1, 7:8, 
+           value = as_paragraph('Kruskal-Wallis test with \u03B7\u00B2 effect size statistic. P values corrected for multiple testing with the false discovery rate method.'), 
+           ref_symbols = 'b', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-hormone-nets, tab.cap = 'Statistics for co-expression networks of hormone-related genes in in the TCGA and GSE99420 cohorts. Top 10 genes with the largest hub scores in each cohort are presented. The complete table is available as a supplementary Excel file.'}
+
+suppl_tabs$hormone_nets %>% 
+  mutate(Cohort = factor(Cohort, c('TCGA', 'GSE99420'))) %>% 
+  blast(Cohort) %>% 
+  map2_dfr(expl_net$top_genes[c("tcga", "gse99420")], 
+       ~filter(.x, `Gene symbol` %in% .y)) %>% 
+  flextable %>% 
+  set_widths(c(2.2, 2, 2.5, 2, 2.5, 2)) %>% 
+  merge_v(1) %>% 
+  italic(j = 2, part = 'body') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-cluster-stats, tab.cap = 'Metrics of cluster separation, potential misclassification, explained variance, and neighborhood misclassification for the hormonal clusters in the TCGA training cohort and the GSE99420 test collective.'}
+
+flextable::flextable(suppl_tabs$cluster_stats) %>% 
+  set_widths(c(2.5, rep(3.3, 4))) %>% 
+  footnote(1, 3, 
+           value = as_paragraph('Fraction of observations with negative silhouette widths.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  footnote(1, 4, 
+           value = as_paragraph('Ratio of the total between sum of squared to the total sum of squares.'), 
+           ref_symbols = 'b', 
+           part = 'header') %>% 
+  footnote(1, 5, 
+           value = as_paragraph('Mean fraction of five nearest neighbors assigned to different clusters.'), 
+           ref_symbols = 'c', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-cluster-factors, tab.cap = 'Expression of the hormone-related cluster-defining genes in the hormonal clusters of testicular cancer samples in the training TCGA cohort and the GSE99420 test collective. Statistical significance of differences between the clusters was determined by Kruskal-Wallis test with with eta-square effect size statistic. P values were corrected for multiple testing with the false discovery rate method. Log2-transformed expression levels are shown as medians with interquartile ranges and ranges. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$cluster_factors[1, 1] %>% 
+  mutate(Cohort = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+\newpage
+
+```{r tab-cluster-clinics, tab.cap = 'Clinical characteristic of the hormonal clusters in the TCGA and GSE99420 cohorts. Quantitative variables are presented as medians with interquartile ranges and ranges. Qualitative variables are presented as percentages and counts of the categories within the clusters.'}
+
+suppl_tabs$cluster_clinic %>% 
+  compact_tbl %>% 
+  flextable %>% 
+  set_widths(c(2.1, 2, rep(3, 4), 2.5, 2)) %>% 
+  merge_v(1) %>% 
+  footnote(1, 2, 
+           value = as_paragraph('IGCCCG: International Germ Cell Cancer Collaborative Group risk strata; ICD-0: international classification of diseases for oncology, histological subtype.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  footnote(1, 7:8, 
+           value = as_paragraph("Numeric variables: Kruskal-Wallis test with \u03B7\u00B2 effect size statistic. Categorical variables: \u03C7\u00B2 test with Cramer's V effect size statistic. P values corrected for multiple testing with the false discovery rate method."), 
+           ref_symbols = 'b', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-pfs-cox, tab.cap = 'Numeric statistics of performance of RIDGE Cox proportional hazard models of progression-free survival in the TCGA cohort.'}
+
+suppl_tabs$pfs_cox %>% 
+  compact_tbl %>% 
+  flextable %>% 
+  set_widths(c(3, 2, 2, 4, 2, 2)) %>% 
+  footnote(1, 1, 
+           value = as_paragraph('Clinical factors: age, serum marker stage, and histological subtype.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>% 
+  footnote(1, 4, 
+           value = as_paragraph("C-index: Harrell's concordance index with 95% confidence interval."), 
+           ref_symbols = 'b', 
+           part = 'header') %>% 
+  footnote(1, 5, 
+           value = as_paragraph('IBS: integrated Brier score.'), 
+           ref_symbols = 'c', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+
+
+\newpage
+
+```{r tab-infiltration, tab.cap = 'Non-malignant cell content in the hormonal clusters of the TCGA and GSE99420 cohorts was estimated by the QuanTIseq, xCell, and MCP Counter algorithms. Differences in the predicted cell levels between the clusters between the clusters were investigated by Kruskal-Wallis test with eta-square effect size statistic. P values were corrected for multiple tesing with the false discovery rate method. Median infiltration levels with interquartile ranges and ranges are shown. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$infiltration[1, 1] %>% 
+  mutate(Algorithm = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-reactome, tab.cap = 'Differences in single sample gene set enrichment analysis scores (ssGSEA scores) of the Reactome pathway gene signatures were compared between the hormonal clusters by one-way ANOVA with eta-square effect size statistic. P values were corrected for multiple testing with the false discovery rate method. Median ssGSEA scores with interquartile ranges and ranges are shown for gene signatures found to differ significantly between the clusters in both the TCGA and GSE99420 cohorts. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$reactome[1, 1] %>% 
+  mutate(Cohort = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-dge, tab.cap = 'Genes differentially regulated in the hormonal clusters as compared with the cohort means. Statistical significance of differences in log2-transformed expression levels between the clusters was assessed by one-way ANOVA with eta-square effect size statistic. Statistical significance of differences between log2-transformed expression in the cluster and the cohort mean was determined by one-sample two-tailed T test P values were corrected for multiple testing with the false discovery rate method. Differential regulation in a particular cluster was considered for pFDR(ANOVA) < 0.05, eta-squared of at least 0.14, and pFDR(T test) < 0.05. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$dge[1, 1] %>% 
+  mutate(Cohort = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-go, tab.cap = 'Biological process gene ontology (GO) term enrichment analysis for genes found differentially regulated in the hormonal clusters was performed with the goana algorithm. Enrichment p values were corrected for multiple testing with the false discovery rate method (FDR). Odds ratio of enrichment in the differentially regulated gene set as compared with the entire genome served as enrichment effect size metric. GO terms found to be significantly enriched in the corresponding clusters of both the TCGA and GSE99420 cohort are shown. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$go[1, 1] %>% 
+  mutate(Cluster = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+  
+
+```
+
+```{r tab-collectri, tab.cap = 'Differential modulation of transcriptional collecTRI regulons in the hormonal clusters as compared with the cohort mean. Analysis of regulon activity was investigated by univariable linear modeling algorithm from the decoupleR package fed with T statistic values of differential gene expression of all available genes. Magnitude of differential regulon activity was measured by linear modeling score (LM score). P values of non-zero LM score were corrected for multiple testing with the false discovery rate method. Regulons found to be differentially modulated in both the TCGA and GSE99420 cohorts are shown. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$collectri[1, 1] %>% 
+  mutate(Cluster = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+\newpage
+
+```{r tab-progeny, tab.cap = 'Differential regulation of PROGENy signaling pathways in the hormonal clusters as compared with the cohort mean. Analysis of signaling pathway activity was investigated by multivariable linear modeling algorithm from the decoupleR package fed with T statistic values of differential gene expression of all available genes. Magnitude of differential pathway activity was measured by linear modeling score (LM score). P values of non-zero LM score were corrected for multiple testing with the false discovery rate method. Signaling pathways found to be differentially regulated in both the TCGA and GSE99420 cohorts are shown.'}
+
+flextable::flextable(suppl_tabs$progeny) %>% 
+  merge_v(1:2) %>% 
+  set_widths(c(2.1, 2.5, 2.2, 2.5, 2, 2.4)) %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-reactions, tab.cap = 'Differential regulation of RECON2 model reactions in the hormonal clusters as compared with the cohort mean was investigated by Monte Carlo simulation fed with log2 fold-regulation estimates of differential gene expression and their standard errors for all available genes. Log2 fold-regulation estimates of reaction activity with 95% confidence intervals (95% CI) and false discovery rate (FDR) corrected p values are presented for metabolic reactions found to be significantly regulated both in the TCGA and GSE99420 cohort. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$reactions[1, 1] %>% 
+  mutate(Cluster = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-subsystems, tab.cap = 'Enrichment of RECON metabolic subsystems with significantly activated and inhibited reactions in the hormonal clusters of testicular cancer. Statistical significance was investigated by comparing frequency of the subsystem reaction within the activated or inhibited reaction set with 100000 random draws from the total reaction pool. Odds ratio (OR) of enrichment in the regulated reaction set over the entire reaction pool served as an effect size metric. Because p values decrease with increasing numbers or random draws, no multiple testing correction was applied. Metabolic subsystems found significantly enriched with activated or inhibited reactions in both the TCGA and GSE99420 cohorts are presented. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$subsystems[1, 1] %>% 
+  mutate(Cluster = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-protein, tab.cap = 'Expression of proteins in the hormonal clusters of the TCGA cohorts was compared with the cohort means. Statistical significance of differences in log2-transformed expression levels between the clusters was assessed by one-way ANOVA with eta-square effect size statistic. Statistical significance of differences between log2-transformed expression in the cluster and the cohort mean was determined by one-sample two-tailed T test. P values were corrected for multiple testing with the false discovery rate method. Differential regulation in a particular cluster was considered for pFDR(ANOVA) < 0.05, eta-squared of at least 0.14, and pFDR(T test) < 0.05. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$protein[1, 1] %>% 
+  mutate(Cluster = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+\flextable
+
+```{r tab-genetic-numbers, tab.cap = 'Total mutation numbers, scores of microsatellite instability, and numbers of gene mutations deletions, and amplifications in the hormonal clusters of the TCGA cohort. Medians with interquartile ranges and ranges are shown.'}
+
+suppl_tabs$genetic_numbers %>% 
+  compact_tbl %>% 
+  flextable %>% 
+  set_widths(c(2.2, rep(2.7, 4), 2.5, 2.1)) %>% 
+  footnote(1, 1, 
+           value = as_paragraph('MB: million base pairs; MSI: microsatellite instability.'), 
+           ref_symbols = 'a', 
+           part = 'header') %>%
+  footnote(1, 6:7, 
+           value = as_paragraph('Kruskal-Wallis test with \u03B7\u00B2 effect size statistic. P values corrected for multiple testing with the false discovery rate method.'), 
+           ref_symbols = 'b', 
+           part = 'header') %>% 
+  theme_vanilla
+
+```
+
+\newpage
+
+```{r tab-genetics, tab.cap = "Frequencies of gene mutations, deletions, and amplifications in the hormonal clusters of the TCGA cohort. Statistical significance of differences between the clusters was determined by chi-square test with Cramer's V effect size statistic. P values were corrected for multiple testing with the false discovery rate method. The table is available as a supplementary Excel file."}
+
+suppl_tabs$genetics[1, 1] %>% 
+  mutate(`Feature type` = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+```{r tab-drugs, tab.cap = 'Drug response in for of log IC50 and area under response curve (AUC) was predicted for cancer samples by whole-transcriptome RIDGE linear models trained with the CTRP2 and GDSC drug screening data sets. Statistical significance of differences in the drug response metrics between the clusters was assessed by one-way ANOVA with eta-square effect size statistic. Statistical significance of differences between the drug response metrics in the cluster and the cohort mean was determined by one-sample two-tailed T test P values were corrected for multiple testing with the false discovery rate method. Differential drug response in a particular cluster was considered for pFDR(ANOVA) < 0.05, eta-squared of at least 0.14, and pFDR(T test) < 0.05. The table is available as a supplementary Excel file.'}
+
+suppl_tabs$drugs[1, 1] %>% 
+  mutate(`Training data set` = '') %>% 
+  set_names(' ') %>% 
+  flextable %>% 
+  set_widths(16)
+
+```
+
+\newpage
+
+# Supplementary Figures
+
+```{r fig-histology, fig.width = figur::convert(suppl_figs$histology, to = 'in')$w, fig.height = figur::convert(suppl_figs$histology, to = 'in')$h, fig.cap = 'Differential expression of hormone-related genes in histological subtypes of testicular cancer in the TCGA cohort.'}
+
+suppl_figs$histology$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-histology). Differential expression of hormone-related genes in histological subtypes of testicular cancer in the TCGA cohort.__ 
+
+_Detailed histological subtyping according to ICD-O (international classification of diseases for oncology) was available for the TCGA cancer samples. $log_2$-transformed cancer tissue expression of `r length(expl_dist$top_variables)` sex hormonal-related genes was compared between the histological subtypes by Kruskal-Wallis test with $\eta^2$ effect size statistic. P values were corrected for multiple testing with the false discovery rate method._
+
+_(A) Normalized $log_2$ expression levels (Z-scores) of significantly regulated genes (pFDR < 0.05) in the histological subtypes are presented in a heat map. The genes are arranged by their peak expression in the histological subsets. Functional gene classification is color coded in the vertical rug plot._
+
+_(B) $log_2$ expression levels for selected, strongly regulated hormone-related genes characteristic for particular histological subtypes. Median $log_2$ expression levels with interquartile ranges are presented in boxes with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are visualized as points. Effect sizes and p values are displayed in the plot captions. Numbers of samples assigned to the histological subtypes are indicated in the X axis._
+
+_SEM: seminoma; MGCT: mixed germ cell tumor; EMBCA: embryonal carcinoma; TT: teratoma and teratocarcinoma; TYST: yolk sac tumor._
+
+\newpage
+
+```{r fig-co-expression, fig.width = figur::convert(suppl_figs$co_expression, to = 'in')$w, fig.height = figur::convert(suppl_figs$co_expression, to = 'in')$h, fig.cap = 'Networks of co-expressed hormone-related genes in testicular carcinoma.'}
+
+suppl_figs$co_expression$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-co-expression). Networks of co-expressed hormone-related genes in testicular carcinoma.__ 
+
+_Pairwise correlation of cancer tissue expression of `r length(expl_dist$top_variables)` sex hormone-related genes was investigated by Spearman's $\rho$ correlation coefficients. Associations with $\rho \geq 0.3$ were analyzed and visualized as undirected graphs._
+
+_(A) Visualization of the gene co-expression graph in the TCGA and GSE99420 cohort. Graph nodes are depicted as points, whose color codes for functional gene classification. Edge color and width codes for Spearman's $\rho$ value. Note the clusters of co-expressed genes involved in general steroid biosynthesis (STAR, CYP11A1, HSD3B1/2, CYP17A1), and gonadal hormone production and transport (CYP19A1, HSD17B3, SHBG)._
+
+_(B) Graph node importance statistics for the hormone-related genes. Degree represents the numbers of node neighbors. Betweenness is defined as the number of shortest paths between node pairs passing through the particular node divided by the total node pair number. Hub scores are defined as the principal eigenvector of the gene expression correlation matrix of Spearman's $\rho$ coefficients. Degree and betweenness for the sex hormone-related genes are presented in the scatter plot axes. Point size codes for hub score value. Functional classification of the genes is color-coded._
+
+\newpage
+
+```{r fig-clusters, fig.width = figur::convert(suppl_figs$clusters, to = 'in')$w, fig.height = figur::convert(suppl_figs$clusters, to = 'in')$h, fig.cap = 'Development of the hormonal clusters with the TCGA training data set and evaluation of the clustering structures in the TCGA and GSE99420 cohorts.'}
+
+suppl_figs$clusters$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-clusters). Development of the hormonal clusters with the TCGA training data set and evaluation of the clustering structures in the TCGA and GSE99420 cohorts.__ 
+
+_Testicular cancer samples in the TCGA training cohort were assigned to the hormonal clusters in respect to $log_2$ expression values of `r length(clust_globals$variables)` sex hormone-related genes by hard-threshold regularized KMEANS unsupervised clustering. The hormonal cluster assignment was predicted for cancer samples in the GSE99420 training collective by a Random Forest classifier fed with $log_2$-transformed expression levels of the cluster-defining genes._
+
+_(A) Choice of cluster number k = 4 in the unsupervised clustering of the TCGA training cohort samples was motivated by the maximum of mean silhouette width. Statistics of cluster separation (mean silhouette width), misclassification rate (fraction of observations with negative silhouette widths), explained variance (ratio of the total between-cluster sum of squares to the total sum of squares), and neighborhood error (mean fraction of the five nearest neighbors assigned to different clusters) for various k values are presented._
+
+_(B) Comparison of sized of the hormonal clusters in the training TCGA cohort and the test GSE99420 collective. Statistical significance was determined by $\chi^2$ test with Cramer's V effect size statistic. Percentages of samples in the hormonal clusters are shown in a stack plot. The effect size and p value are displayed in the plot caption. Numbers of cancer samples in the cohorts are indicated in the Y axis._
+
+_(C) Similarity and separation of the hormonal clusters was investigated by comparing pairwise sum-of-square distances between observations in each of the TCGA and GSE99420 cohort. Similarity of the clusters in the training TCGA cohort and the test GSE99420 cohort was assessed by comparing sum-of-square cross-distances (i.e. each of observations in the GSE99420 cohort with all observations in the TCGA cohort). Mean pairwise distance and cross-distances are presented in heat maps. The heat map tiles are labeled with mean distances with 95 percentile ranges._
+
+\newpage
+
+```{r fig-cluster-key, fig.width = figur::convert(suppl_figs$cluster_key, to = 'in')$w, fig.height = figur::convert(suppl_figs$cluster_key, to = 'in')$h, fig.cap = 'Expression of the key cluster-defining hormone-related genes.'}
+
+suppl_figs$cluster_key$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-cluster-key). Expression of the key cluster-defining hormone-related genes.__ 
+
+_$log_2$ expression of the hormonal cluster-defining genes was compared between the hormonal clusters by Kruskal-Wallis test with $\eta^2$ effect size statistic. P values were adjusted for multiple testing with the false discovery rate method. Expression of PRL (prolactin, maximum in cluster #1), GNRH1 (gonadotropin releasing hormone 1, cluster #1), SRD5A3 (steroid 5 alpha-reductase 3, testosterone catabolism, #2), CYP19A1 (aromatase, synthesis of estradiol, cluster #3), CGA (glycoprotein hormones, alpha polypeptide or gonadotropins, cluster #3), STAR (steroidogenic acute regulatory protein, steroid synthesis, cluster #4), and HSD17B3 (hydroxysteroid 17-beta dehydrogenase 3, testosterone synthesis, cluster #4) was found to differ strongly between the hormonal clusters in both the TCGA and GSE99420 cohorts. Median $log_2$ expression values with interquartile ranges are depicted as boxes with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are visualized as points. Effect sizes and p values are displayed in the plot captions. Numbers of samples in the clusters are provided in the plot legends._
+
+\newpage
+
+```{r fig-surv, fig.width = figur::convert(suppl_figs$surv, to = 'in')$w, fig.height = figur::convert(suppl_figs$surv, to = 'in')$h, fig.cap = 'Relapse-free survival in the hormonal clusters. Multi-parameter modeling of progression-free survival.'}
+
+suppl_figs$surv$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-surv). Relapse-free survival in the hormonal clusters. Multi-parameter modeling of progression-free survival.__ 
+
+_(A) General and pairwise differences in relapse-free survival between the hormonal clusters of the TCGA cohort were assessed by Peto-Peto tests adjusted for multiple testing with the false discovery rate method. Fractions of surviving patients are visualized in a Kaplan-Meier plot with total numbers of observations and relapses indicated in the plot caption (right panel). Number of observations and relapse cases in the hormonal clusters are displayed in the Kaplan-Meier plot legend; p values for the general difference in survival is shown in the plot. P values of the pairwise comparison of survival between the hormonal clusters are displayed in a heat map (left panel)._
+
+_(B) Multi-parameter modeling of progression-free survival (PFS) by RIDGE Cox proportional hazard regression in the TCGA cohort. Three models were constructed: (1) a model with hormonal cluster assignment (cluster #1/3 and cluster #4; baseline: cluster #2), (2) a model with clinical prognostic factors (age, serum cancer marker positivity, histological subtypes), and (3) a model with hormonal cluster assignment and the clinical prognostic factors. PFS models were evaluated by Harrell's concordance index with 95% confidence interval, integrated Brier score, and $R^2$, as measures of model predictive performance, calibration, and explanatory performance, respectively (left panel; dashed lines represent values expected for a nonsense model). Coefficient estimates for the clinical/cluster PFS model were expressed as hazard ratios (HR) and presented in a bar plot (right panel)._
+
+\newpage
+
+```{r fig-infiltration, fig.width = figur::convert(suppl_figs$infiltration, to = 'in')$w, fig.height = figur::convert(suppl_figs$infiltration, to = 'in')$h, fig.cap = 'Infiltration of cancer-associated fibroblasts, T and B cells in the hormonal clusters predicted by the QuanTIseq and MCP Counter algorithms.'}
+
+suppl_figs$infiltration$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-infiltration). Infiltration of cancer-associated fibroblasts, T and B cells in the hormonal clusters predicted by the QuanTIseq and MCP Counter algorithms.__ 
+
+_Fractions of non-malignant cells and counts of non-malignant cells in cancer samples were estimates with the QuanTIseq and MCP Counter immunedeconvolution algorithms and compared between the hormonal clusters by Kruskal-Wallis test with $\eta^2$ effect size statistic. P values were corrected for multiple testing with the false discovery rate method._ 
+_Levels of T cells (T), CD8+ T cells, B cells (B), and cancer-associated fibroblasts (CAF) were identified to differ significantly between the hormonal clusters in at least one of the TCGA or GSE99420 cohorts. Median cell levels with interquartile ranges are presented as boxes with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are visualized as points. Effect sizes and p values are displayed in the plot captions. Numbers of samples in the clusters are indicated in the plot legends._
+
+\newpage
+
+```{r fig-dge, fig.width = figur::convert(suppl_figs$dge, to = 'in')$w, fig.height = figur::convert(suppl_figs$dge, to = 'in')$h, fig.cap = 'Differential gene expression in the hormonal clusters: common top regulated genes.'}
+
+suppl_figs$dge$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-dge). Differential gene expression in the hormonal clusters: common top regulated genes.__ 
+
+_$log_2$-transformed gene expression levels were compared between the hormonal clusters of the TCGA and GSE99420 cohorts by one-way ANOVA with $\eta^2$ effect size statistic. Differences in $log_2$-transformed expression between the cluster and the cohort mean were assessed by one-sample T test. P values were corrected for multiple testing with the false discovery rate (FDR) method. Genes with pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05 were deemed differentially regulated._ 
+_Differences in $log_2$ mean expression in the cluster and $\log_2$ cohort mean expression with 95% confidence intervals for the top most strongly up- and downregulated genes in the hormonal clusters are presented in Forest plots._
+
+\newpage
+
+```{r fig-go-clust, fig.width = figur::convert(suppl_figs$go_clust, to = 'in')$w, fig.height = figur::convert(suppl_figs$go_clust, to = 'in')$h, fig.cap = 'Biological process GO term enrichment in the hormonal clusters.'}
+
+suppl_figs$go_clust$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-go-clust). Biological process GO term enrichment in the hormonal clusters.__ 
+
+_Genes found to be differentially regulated in the hormonal clusters as compare with the cohort mean were subjected to biological process gene ontology (GO) enrichment analysis. Significantly enriched GO terms shared by both the TCGA and GSE99420 cohorts were subjected to unsupervised hierarchical clustering in respect to pairwise semantic Wang distances. The clusters of those common significant GO terms were named after their characteristic biological features and visualized in two-dimensional scaling layouts of the distance matrices. Each point represents a single GO term, point color coded for the semantic cluster assignment. Numbers of the common, cluster-enriched GO terms are displayed in the plot captions._
+
+\newpage
+
+```{r fig-immun, fig.width = figur::convert(suppl_figs$immun, to = 'in')$w, fig.height = figur::convert(suppl_figs$immun, to = 'in')$h, fig.cap = 'Expression of genes related to immune checkpoint in the hormonal clusters.'}
+
+suppl_figs$immun$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-immun). Expression of genes related to immune checkpoint in the hormonal clusters.__ 
+
+_Expression of CTLA4, TIGIT, and PDCD1 genes of relevance for immune checkpoint was found to differ significantly between the hormonal clusters of both the TCGA and GSE99420 cohort. Median $log_2$-transformed mRNA levels with interquartile ranges are presented as boxes with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are depicted as points. Effect sizes and p values of differences between the clusters assessed by one-way ANOVA are displayed in the plot captions. Numbers of samples in the clusters are indicated in the X axes._
+
+\newpage
+
+```{r fig-cta, fig.width = figur::convert(suppl_figs$cta, to = 'in')$w, fig.height = figur::convert(suppl_figs$cta, to = 'in')$h, fig.cap = 'Expression of cancer testis antigens and markers of testicular carcinoma in the hormonal clusters.'}
+
+suppl_figs$cta$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-cta). Expression of cancer testis antigens and markers of testicular carcinoma in the hormonal clusters.__ 
+
+_Cancer testis antigens and testicular cancer markers constituted a prominent group of genes found to be differentially regulated between the hormonal clusters of both the TCGA and GSE99420._
+
+_(A) Normalized $log_2$ expression (Z-scores) of cancer testis antigens and testicular markers found to be differentially regulated between the hormonal clusters in both cohorts are presented in heat maps. The genes are arranged by their maximal expression in the hormonal clusters of the TCGA cohort. Numbers of samples in the hormonal clusters are displayed in the plot captions._
+
+_(B) Expression of testicular cancer marker-coding genes AFP (alpha-fetoprotein), CGA (glycoprotein Hormones, alpha polypeptide), LDHA, and LDHC (A and C subunits of lactate dehydrogenase) in the hormonal clusters. Median $log_2$ expression values with interquartile ranges are shown in box plots with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are depicted as points. Effect sizes and p values of differences between the hormonal clusters obtained by on-way ANOVA are displayed in the plot captions. Numbers of samples in the clusters are provided in (A)._
+
+\newpage
+
+```{r fig-gfr, fig.width = figur::convert(suppl_figs$gfr, to = 'in')$w, fig.height = figur::convert(suppl_figs$gfr, to = 'in')$h, fig.cap = 'Expression of genes coding of ERBB and FGFR family receptors, ERBB/FGFR ligands, and receptors for gonadotropins and sex hormones in the hormonal clusters.'}
+
+suppl_figs$gfr$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-gfr). Expression of genes coding of ERBB and FGFR family receptors, ERBB/FGFR ligands, and receptors for gonadotropins and sex hormones in the hormonal clusters.__ 
+
+_(A) Genes coding for ERBB and FGF receptors and ligands were significantly enriched in particular hormonal clusters. Normalized $log_2$-transformed expression levels (Z-scores) of genes coding for ERBB and FGF ligands and receptors found to be differentially regulated between the clusters in both the TCGA and GSE99420 cohorts are shown in heat maps. The genes are arranged by their maximal expression in the hormonal clusters of the TCGA cohort. Numbers of samples in the clusters are indicated in the heat map captions._
+
+_(B) Expression of FSHR (follicle stimulating hormone receptor), LHCGR (luteinizing hormone/choriogonadotropin receptor), ESR2 (estrogen receptor beta), and AR (androgen receptor) was found to differ between the hormonal clusters in both investigated cohorts. Median $log_2$ expression values with interquartile ranges are shown in box plots with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are depicted as points. Effect sizes and p values of differences between the hormonal clusters obtained by on-way ANOVA are displayed in the plot captions. Numbers of samples in the clusters are provided in (A)._
+
+\newpage
+
+```{r fig-erar-resp, fig.width = figur::convert(suppl_figs$erar_resp, to = 'in')$w, fig.height = figur::convert(suppl_figs$erar_resp, to = 'in')$h, fig.cap = 'Expression of estrogen- and androgen-responsive genes in the hormonal clusters.'}
+
+suppl_figs$erar_resp$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-erar-resp). Expression of estrogen- and androgen-responsive genes in the hormonal clusters.__ 
+
+_Normalized $log_2$-transformed expression levels (Z-scores) of estrogen- (A, investigated: n = `r nrow(bcg_estro$gene_lexicon)`, common regulated: n = `r length(unique(unlist(bcg_estro$common_significant)))`) and androgen-responsive genes (B, investigated: n = `r nrow(bcg_andro$gene_lexicon)`, common regulated: n = `r length(unique(unlist(bcg_andro$common_significant)))`) found to be differentially regulated between the hormonal clusters in the TCGA and GSE99420 cohort are presented in heat maps. Font color of the gene symbols represent the gene response sign reported in literature; genes reported to be upregulated are labeled with orange font, genes reported to be downregulated by the sex hormones are labeled with violet font. Numbers of samples in the clusters are displayed in the plot captions._
+
+\newpage
+
+```{r fig-ecm, fig.width = figur::convert(suppl_figs$ecm, to = 'in')$w, fig.height = figur::convert(suppl_figs$ecm, to = 'in')$h, fig.cap = 'Expression of matrisome genes in the hormonal clusters of testicular carcinoma.'}
+
+suppl_figs$ecm$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-ecm). Expression of matrisome genes in the hormonal clusters of testicular carcinoma.__ 
+
+_Among `r length(bcg_ecm$genes)` matrisome genes, i.e. genes coding for components of extracellular matrix (ECM), `r length(unique(unlist(bcg_ecm$common_significant)))` genes were found to be differentially regulated between the hormonal clusters in both the TCGA and GSE99420 cohorts. Normalized $log_2$-transformed expression (Z-scores) of those common regulated genes in the hormonal clusters was presented in heat maps. Genes were arranged by their peak expression in the hormonal clusters of the TCGA cohort. Top strongest differentially regulated genes in particular clusters are shown in word clouds next to the Y axis of the heat maps (gray: genes regulated in cluster #1, green: cluster #2, red: cluster #3, blue: cluster #4). Classification of the common regulated matrisome genes into collagens, ECM glycoproteins, proteoglycans, ECM-affiliated proteins, ECM regulators, and secreted factors is color coded in the vertical rug plot._
+
+\newpage
+
+```{r fig-metabolism, fig.width = figur::convert(suppl_figs$metabolism, to = 'in')$w, fig.height = figur::convert(suppl_figs$metabolism, to = 'in')$h, fig.cap = 'Metabolic subsystem enrichment analysis for the hormonal clusters.'}
+
+suppl_figs$metabolism$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-metabolism). Metabolic subsystem enrichment analysis for the hormonal clusters.__ 
+
+_Modulation of RECON2 model metabolic reactions in the hormonal clusters as compared with the cohort mean was modeled by Monte Carlo simulation provided with $log_2$ fold-regulation estimates of differential expression with their standard errors for all available genes. Enrichment of the RECON metabolic subsystems with significantly activated or inhibited reactions was computed by comparing frequencies of the subsystem's reactions in the regulated reaction set with frequencies in 100000 random draws from the entire reaction pool. Enrichment p values were corrected for multiple testing with the false discovery rate method. Odds ratio (OR) served as an effect size metric of the enrichment in the regulated reaction set as compared with the entire reaction pool. OR values for metabolic subsystems found to be significantly enriched with activated and inhibited reactions in particular hormonal subsets are presented in bar plots._
+
+_A and E: androgen and estrogen metabolism; FASynth: fatty acid synthesis; OxPhos: oxidative phosphorylation; ROSdetox: reactive oxygen species detoxification; FAOx: fatty acid oxidation._
+
+\newpage
+
+```{r fig-energy-reations, fig.width = figur::convert(suppl_figs$energy_reactions, to = 'in')$w, fig.height = figur::convert(suppl_figs$energy_reactions, to = 'in')$h, fig.cap = 'Predicted regulation of reactions of citric acid cycle and oxidative phosphorylation in the hormonal clusters.'}
+
+suppl_figs$energy_reactions$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-energy-reations). Predicted regulation of reactions of citric acid cycle and oxidative phosphorylation in the hormonal clusters.__ 
+
+_Modulation of RECON2 model metabolic reactions in the hormonal clusters as compared with the cohort mean was modeled by Monte Carlo simulation provided with $log_2$ fold-regulation estimates of differential expression with their standard errors for all available genes. $log_2$ fold-regulation estimates of activity of reactions of citric acid cycle (A) and oxidative phosphorylation (B) found to be significantly activated or inhibited in the hormonal clusters as compared with the cohort mean in both the TCGA and GSE99420 cohorts are presented in bar plots._
+
+_IDH: isocitrate dehydrogenase; ATPS4m: mitochondrial ATP synthase (four protons for one ATP); CYOOm2/3: cytochrome c oxidase reactions; NADH2 u10m: mitochondrial NADH dehydrogenase,_
+
+\newpage
+
+```{r fig-steroid-reactions, fig.width = figur::convert(suppl_figs$steroid_reactions, to = 'in')$w, fig.height = figur::convert(suppl_figs$steroid_reactions, to = 'in')$h, fig.cap = 'Predicted activity of steroid metabolism reactions in the hormonal clusters.'}
+
+suppl_figs$steroid_reactions$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-steroid-reactions). Predicted activity of steroid metabolism reactions in the hormonal clusters.__ 
+
+_Modulation of RECON2 model metabolic reactions in the hormonal clusters as compared with the cohort mean was modeled by Monte Carlo simulation provided with $log_2$ fold-regulation estimates of differential expression with their standard errors for all available genes. $log_2$ fold-regulation estimates of activity of reactions of steroid and steroid hormone metabolism found to be significantly activated or inhibited in the hormonal clusters as compared with the cohort mean in both the TCGA and GSE99420 cohorts are presented in bar plots. Functional classification of the reactions is color coded in the vertical rug plot. Reactions are labeled with their official names or, if the name was not available, with BIGG/RECON identifiers._
+
+\newpage
+
+```{r fig-gf-signaling, fig.width = figur::convert(suppl_figs$gf_signaling, to = 'in')$w, fig.height = figur::convert(suppl_figs$gf_signaling, to = 'in')$h, fig.cap = 'Regulation of growth factor pathway signaling proteins in the hormonal clusters.'}
+
+suppl_figs$gf_signaling$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-gf-signaling). Regulation of growth factor pathway signaling proteins in the hormonal clusters.__ 
+
+_Expression of `r nrow(bcg_protein$anova)` cancer biology-relevant proteins was investigated in cancer samples of the TCGA cohort with reverse phase protein array. $log_2$-transformed expression levels were compared between the hormonal clusters by one-way ANOVA with $\eta^2$ effect size statistic. Differences in $log_2$-transformed expression between the cluster and the cohort mean were assessed by one-sample T test. P values were corrected for multiple testing with the false discovery rate (FDR) method. Proteins with pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05 were deemed differentially regulated._
+
+_$log_2$ fold-regulation estimates of levels of proteins of the EGFR/ERBB signaling pathways in the clusters as compared with the respective cohort averages are presented in a dot plot. Point and segment colors code for significance and regulation sign. FDR-corrected p values are coded by point size._
+
+\newpage
+
+```{r fig-pro-net-clust1-2, fig.width = figur::convert(suppl_figs$pro_net_clust1_2, to = 'in')$w, fig.height = figur::convert(suppl_figs$pro_net_clust1_2, to = 'in')$h, fig.cap = 'Co-expression protein networks in the hormonal subsets of the TCGA cohort: clusters #1 and #2.'}
+
+suppl_figs$pro_net_clust1_2$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-pro-net-clust1-2). Co-expression protein networks in the hormonal subsets of the TCGA cohort: clusters #1 and #2..__ 
+
+_Expression of `r nrow(bcg_protein$anova)` cancer biology-relevant proteins was investigated in cancer samples of the TCGA cohort with reverse phase protein array. Pairwise correlation of $log_2$-transformed protein levels in the hormonal clusters was investigated by Pearson's r correlation coefficients. Associations with $r \geq 0.5$ were analyzed and visualized as undirected graphs. Graph nodes are depicted as points, whose colors code for protein community (i.e. cluster of inter-connected nodes). Edge color and width codes for Pearson's r value. Proteins with the largest node importance statistics (degree, betweenness, and hub score) are labeled in the plot with their symbols._
+
+\newpage
+
+```{r fig-pro-net-clust3-4, fig.width = figur::convert(suppl_figs$pro_net_clust3_4, to = 'in')$w, fig.height = figur::convert(suppl_figs$pro_net_clust3_4, to = 'in')$h, fig.cap = 'Co-expression protein networks in the hormonal subsets of the TCGA cohort: clusters #3 and #4.'}
+
+suppl_figs$pro_net_clust3_4$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-pro-net-clust3-4). Co-expression protein networks in the hormonal subsets of the TCGA cohort: clusters #3 and #4.__ 
+
+_Expression of `r nrow(bcg_protein$anova)` cancer biology-relevant proteins was investigated in cancer samples of the TCGA cohort with reverse phase protein array. Pairwise correlation of $log_2$-transformed protein levels in the hormonal clusters was investigated by Pearson's r correlation coefficients. Associations with $r \geq 0.5$ were analyzed and visualized as undirected graphs. Graph nodes are depicted as points, whose colors code for protein community (i.e. cluster of inter-connected nodes). Edge color and width codes for Pearson's r value. Proteins with the largest node importance statistics (degree, betweenness, and hub score) are labeled in the plot with their symbols._
+
+\newpage
+
+```{r fig-burdens, fig.width = figur::convert(suppl_figs$burdens, to = 'in')$w, fig.height = figur::convert(suppl_figs$burdens, to = 'in')$h, fig.cap = 'Numbers of genetic alterations in the hormonal subsets.'}
+
+suppl_figs$burdens$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-burdens). Numbers of genetic alterations in the hormonal subsets.__ 
+
+_Burdens of mutations per million base pairs (MB), microsatellite instability (MSI), total numbers of mutations, gene deletions and alterations in the cancer samples were compared between the hormonal clusters of the TCGA cohorts by Kruskal-Wallis test with $\eta^2$ effect size statistic. P values were corrected for multiple testing with the false discovery rate method. Median values with interquartile ranges are presented in box plots with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are depicted as points. Effect sizes and p values are displayed in the plot captions. Numbers of observations in the clusters are indicated in the X axes._
+
+\newpage
+
+```{r fig-genetics, fig.width = figur::convert(suppl_figs$genetics, to = 'in')$w, fig.height = figur::convert(suppl_figs$genetics, to = 'in')$h, fig.cap = 'Cluster-specific genetic alterations.'}
+
+suppl_figs$genetics$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-genetics). Cluster-specific genetic alterations.__ 
+
+_Frequencies of somatic gene mutations, gene deletions and amplifications were compared between the hormone clusters of the TCGA cohort by $\chi^2$ test with Cramer's V effect size statistic. P values were corrected for multiple testing with the false discovery rate method (FDR). Percentages of genetic alterations differing between the clusters with V $\geq$ 0.2 are presented in bar plots. Non-significant effects are labeled with gray font, effects with raw p < 0.05 are labeled with colored font, effects with pFDR < 0.05 are highlighted by colored bold font. Note, that concomitant amplification of ID1, HM13, BCL2L1, COX4I2, and defensin genes predominantly in cluster #1 suggests amplification of the 20q11 chromosomal region. Analogically, concomitant amplification of MDM2, LYZ, FRS2, CPM, and other genes in cluster #3 suggests amplification of the 12q15 chromosomal region._
+
+\newpage
+
+```{r fig-drugs, fig.width = figur::convert(suppl_figs$drugs, to = 'in')$w, fig.height = figur::convert(suppl_figs$drugs, to = 'in')$h, fig.cap = 'Predicted anti-cancer drug response in the hormonal clusters.'}
+
+suppl_figs$drugs$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-drugs). Predicted anti-cancer drug response in the hormonal clusters.__ 
+
+_Anti-cancer drug response in form of AUC (are under the dose-response curve) in cancer samples was predicted by RIDGE linear models trained with the CTRP2 drug screening data set. The AUC values were compared between the hormonal clusters by one-way ANOVA with $\eta^2$ effect size statistic. Differences in the AUC values between the cluster and the cohort mean were assessed by one-sample T test. P values were corrected for multiple testing with the false discovery rate (FDR) method. Compounds with pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05 were considered significant._
+
+_(A) Normalized AUC values (Z-scores) of compounds found to be significant in both the TCGA and GSE99420 cohort are presented in heat maps. The compounds are arranged by their peak expression in the hormonal clusters of the TCGA cohort. Compound classification is color coded in the vertical rug plot._
+
+_(B) Predicted AUC for representative compounds interfering with nucleotide and DNA synthesis (metothrexate), growth factor signaling (dasatinib), and apoptosis pathways (obatoclax). Median AUC values with interquartile ranges are visualized as boxes with whiskers spanning over 150% of the interquartile ranges. Single cancer samples are depicted as points. Effect sizes and p values for differences between the clusters investigated by one-way ANOVA are displayed in the plot captions. Numbers of samples in the clusters are indicated in the X axes._
+
+\newpage
+
+```{r fig-summary, fig.width = figur::convert(suppl_figs$summary, to = 'in')$w, fig.height = figur::convert(suppl_figs$summary, to = 'in')$h, fig.cap = 'Summary of the analysis results.'}
+
+suppl_figs$summary$plot
+
+```
+
+__Supplementary Figure S\@ref(fig:fig-summary). Summary of the analysis results.__ 
+
+_ER: estrogen receptor; AR: androgen receptor; DHT: dihydrotestosteron; NSGCT: nonseminomatous germ cell tumor; TME: tumor microenvironment; ECM: extracellular matrix; TKI: tyrosine kinase inhibitors._
+
+\newpage
+
+# References
