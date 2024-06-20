@@ -16,7 +16,7 @@
               class = category,
               color = globals$protein_colors[category])
 
-  ## caspase 3 and caspase 9 are removed because they yontain only NA
+  ## caspase 3 and caspase 9 are removed because they contain only NA
 
   bcg_pronet$data <-
     inner_join(bcg_globals$assignment$tcga,
@@ -125,22 +125,25 @@
                       ', ', globals$cohort_labs["tcga"])) %>%
       pmap(function(x, y) x %>%
              ggplot(aes(x = degree,
-                        y = betweenness,
+                        y = hub_score,
                         fill = .data[[i]],
-                        size = hub_score)) +
+                        size = betweenness)) +
              geom_point(color = 'black',
                         shape = 21) +
-             geom_text_repel(aes(label = protein_labeller(plot_label)),
+             geom_text_repel(aes(label = protein_labeller(variable)),
                              size = 2.3,
                              fontface = 'italic') +
              scale_size_area(max_size = 4,
-                             limits = c(0, 1),
-                             name = 'Normalized\nhub score') +
+                             limits = bcg_pronet$stats %>%
+                               map(~.x$betweenness) %>%
+                               reduce(c) %>%
+                               range,
+                             name = 'Normalized\nbetweenness') +
              globals$common_theme +
              labs(title = y,
-                  subtitle = paste('genes: n =', nrow(x)),
+                  subtitle = paste('proteins: n =', nrow(x)),
                   x = 'degree',
-                  y = 'normalized betweenness'))
+                  y = 'normalized hub score'))
 
   }
 

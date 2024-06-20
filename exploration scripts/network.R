@@ -64,16 +64,16 @@
                  plot_label = ifelse(variable %in% .y,
                                      variable, NA)))
 
-  ## plots of degree and betweenness
+  ## plots of degree, hub scores, and betweenness
 
   expl_net$stat_plots <-
     list(x = expl_net$stats,
          y = globals$cohort_labs[names(expl_net$stats)]) %>%
     pmap(function(x, y) x %>%
            ggplot(aes(x = degree,
-                      y = betweenness,
+                      y = hub_score,
                       fill = class,
-                      size = hub_score)) +
+                      size = betweenness)) +
            geom_point(color = 'black',
                       shape = 21) +
            geom_text_repel(aes(label = plot_label),
@@ -82,13 +82,16 @@
            scale_fill_manual(values = globals$gene_class_colors,
                              name = 'Gene\nclassification') +
            scale_size_area(max_size = 4,
-                           limits = c(0, 1),
-                           name = 'Normalized\nhub score') +
+                           limits = expl_net$stats %>%
+                             map(~.x$betweenness) %>%
+                             reduce(c) %>%
+                             range,
+                           name = 'Normalized\nbetweenness') +
            globals$common_theme +
            labs(title = y,
                 subtitle = paste('genes: n =', nrow(x)),
                 x = 'degree',
-                y = 'normalized betweenness'))
+                y = 'normalized hub score'))
 
 
 # Visualization of the graphs --------

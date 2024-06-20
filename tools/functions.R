@@ -879,4 +879,26 @@
 
   }
 
+  get_percent <- function(data,
+                          variable,
+                          percent_only = TRUE,
+                          signif_digits = 2) {
+
+    ## percentage and number of cases within the variable strata
+
+    var_tbl <- table(data[[variable]])
+
+    n_complete <- sum(var_tbl)
+
+    percents <- signif(var_tbl/n_complete * 100, signif_digits) %>%
+      paste0('%') %>%
+      set_names(names(var_tbl))
+
+    if(percent_only) return(percents)
+
+    map2_chr(percents, var_tbl,
+             ~paste0(.x, '(n = ', .y, ')'))
+
+  }
+
 # END -------

@@ -92,6 +92,7 @@
 
   bcg_glmcox$fold_id <- bcg_glmcox$n_rep %>%
     map(function(x) createFolds(bcg_glmcox$data$progression,
+                                k = 5,
                                 list = FALSE,
                                 returnTrain = TRUE))
 
@@ -313,7 +314,7 @@
                                   reference = 'gray70'),
                        name = 'Explanatory factors') +
     globals$common_theme +
-    labs(title = 'LASSO Cox model calibration',
+    labs(title = 'RIDGE Cox model calibration',
          subtitle = bcg_glmcox$n_caption,
          x = 'progression-free survival, days',
          y = 'Brier score')

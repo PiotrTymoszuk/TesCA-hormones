@@ -264,7 +264,8 @@
 
   rm(ctrp2, gdsc, i)
 
-  drugs <- drugs[c("stats", "plots", "lexicons", "predictions")]
+  drugs <-
+    drugs[c("stats", "plots", "lexicons", "predictions")]
 
   save(drugs, file = './data/drugs.RData')
 
