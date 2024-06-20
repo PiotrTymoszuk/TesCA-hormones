@@ -51,12 +51,12 @@ set_flextable_defaults(font.family = "Cambria",
 
 # Analysis highlights
 
-Two transcriptome data sets of testicular cancers containing both seminoma and NSGCT (nonseminomatous germ cell tumor) histology cancers: TCGA [@Liu2018] and GSE99420 [@Lewin2018]. 
-Of note, most likely because of strikingly different distribution of histological subtypes, and in particular significantly lower frequency of seminomas, we were not able to fully reproduce results of the current analysis in another transcriptomic data set, GSE3218 [@Korkola2006]. 
-The analysis results for the GSE3218 collective are available in the [R analysis pipeline of the project](https://github.com/PiotrTymoszuk/TesCa TCGA) and may be explored by an interesting reader.
+Two transcriptome data sets of testicular cancers containing both seminoma and NSGCT (nonseminomatous germ cell tumor) histology cancers, TCGA [@Liu2018] and GSE99420 [@Lewin2018] were analyzed in the current report. 
+Of note, because of strikingly different distribution of histological subtypes, and in particular significantly lower frequency of seminomas, we were not able to fully reproduce results of the current analysis in another transcriptomic data set, GSE3218 [@Korkola2006]. 
+The analysis results for the GSE3218 collective are available in the [R analysis pipeline of the project](https://github.com/PiotrTymoszuk/TesCA-hormones) and may be explored by an interesting reader.
 The demographic, clinical, and pathological characteristic of the TCGA and GSE99420 cohorts is provided in _Table \@ref(tab:tab-cohorts)_. 
 
-In our previous report, we characterized pathological systemic alterations of pituitary and gonadal hormone levels in a large local cohort of testicular cancer patients. 
+In our previous report, we characterized systemic pathological alterations of pituitary and gonadal hormone levels in a large local cohort of testicular cancer patients. 
 We also delivered initial evidence that genes involved in production of gonadotropins and sex hormones are expressed in testicular cancer tissue at mRNA levels in the publicly available TCGA collective [@Torzsok2023]. 
 Yet, clinical, prognostic, and biological consequences of presence of the hormone-producing machinery in malignant testicular tissue remained unclear. 
 Our current report pursued two goals. 
@@ -66,36 +66,36 @@ Second, we classified testicular cancer samples in respect to varying expression
 In a comparison of expression levels of the sex hormone-related genes between NSGCT and seminoma, the _POMC_ gene coding for an essential regulator of steroid biosynthesis, and genes involved in metabolism (_HSD17B1_, _HSD17B2_, _SRD5A1_) and transport of sex hormones (_SHBG_) were significantly upregulated in NSGCT in both the TCGA and GSE99420 cohorts. 
 The _SRD5A3_ gene coding for a testosterone - DHT (dihydro-testosterone) converting enzyme was the sole transcript upregulated in seminoma in both collectives (__Figure \@ref(fig:fig-histology)__, __Supplementary Table S1__). 
 A more detailed histological subtyping according to ICD-O (international classification of diseases for oncology) was available for the TCGA cohort. 
-In this data set, seminoma caner were characterized by the highest expression of _LHB_ (luteinizing hormone subunit beta) and _SRD5A1_. 
+In this data set, seminoma caner were characterized by the highest expression of _LHB_ (luteinizing hormone subunit beta) and _SRD5A3_. 
 High mRNA levels of genes coding for pituitary gonadotropin subunits _CGA_ and  _GNRH2_ hallmarked mixed germ cell tumors and embryonal carcinomas. 
 Expression of genes involved in general steroid biosynthesis (_STAR_, _POMC_, _CYP11A1_, _FDX1_) and the aromatase-coding gene _CYP19A1_  was the highest in embryonal carcinomas. 
-Pituitary hormone-coding _PRL_ and _GNRH1_ peaked in teratoma cancers, while _SHBG_ mRNA levels were the highest in yolk sac tumors (__Supplementary Figures S1__, __Supplementary Table S2__). 
+Pituitary hormone-coding _PRL_ and _GNRH1_ peaked in teratoma cancers, while _SHBG_ mRNA levels were the highest in yolk sac tumors (__Supplementary Figure S1__, __Supplementary Table S2__). 
 
 A co-expression analysis revealed a highly co-regulated set of hub genes involved in general steroidogenesis (_CYP11A1_, _CYP17A1_, _STAR_, _HSD3B1_, _HSD3B2_) and synthesis of male and female hormones (_CYP19A1_, _HSD17B12_, _HSD17B3_, _SRD5A1_, _SRD5A2_) as well as their transport and catabolism (_SHBG_, __HSD17B2_) (__Supplementary Figure S3__, __Supplementary Table S3__). 
-Those findings combined with the results of differential gene expression analysis for testicular cancer histologies suggest that testicular cancers in general and NSGCT in particular are equipped with the complete machinery synthetic and regulatory pathways of steroid sex hormone metabolism. 
+Those findings combined with the results of differential gene expression analysis for testicular cancer histologies suggest that testicular cancers in general and NSGCT in particular are equipped with the complete synthetic and regulatory machinery of steroid sex hormone metabolism. 
 
-By means of hard-threshold regularized KMEANS clustering [@Raymaekers2022], we assigned cancer samples of the training TCGA cohort into found clusters defined in respect to differing expression of the sex hormone-related genes (__Table \@ref(tab:tab-genes)__, __Supplementary Figure S3A__). 
+By means of hard-threshold regularized KMEANS clustering [@Raymaekers2022], we assigned cancer samples of the training TCGA cohort into four clusters defined in respect to differing expression of the sex hormone-related genes (__Table \@ref(tab:tab-genes)__, __Supplementary Figure S3A__). 
 Subsequently, we predicted the hormonal cluster assignment of cancer samples of the GSE99420 cohort with a Random Forest classifier [@Wright2017; @Breiman2001] fed with cancer tissue levels of the cluster-defining transcripts. 
 There were no significant differences in distribution of sizes of the hormonal clusters between the training and test collective (__Supplementary Figure S3B__). 
 An analysis of pairwise distances between observations of each of the TCGA and GSE99420 cohort and cross-distances between the TCGA and GSE99420 samples indicated sufficient separability of the clusters in each of the cohorts and similarity of the corresponding clusters of the training and test cohort clusters (__Supplementary Figure S3C__). 
 Still, it has to be noted, that in terms of numeric statistics of cluster separability, explanatory performance, and nearest neighborhood preservation, clustering of cancers samples was more efficient in the training TCAG cohort than in the test GSE99420 collective (__Supplementary Table S4__). 
 
-Hormonal cluster #1 consisted primarily NSGCT malignancies (`r clust_eval$clust_sizes %>% filter(clust_id == '#1', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples, mixed and teratoma subtypes) characterized by high expression of the pituitary hormones _PRL_ and _GNRH1_, _HSD17B2_ coding for sex hormone-deactivating enzyme, and _SRD5A1_ coding for a testosterone - DHT converting enzyme. 
-The largest hormonal cluster #2 included predominantly seminomas (`r clust_eval$clust_sizes %>% filter(clust_id == '#2', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples) hallmarked by high expression of the testosterone - DHT converting enzyme _SRD5A3_. 
-Hormonal cluster #3  comprised of NSGCT (`r clust_eval$clust_sizes %>% filter(clust_id == '#3', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples, mixed histology, embryonal carcinoma, yolk sac tumors) with high expression levels of _CGA_ gonadotropin subunit as well as genes involved in estrogen and estradiol synthesis and inter-conversion (_CYP19A1_, _HSD17B12_, _HSD17B1_) and _SHBG_ involved in hormone binding and transport. 
+Hormonal cluster #1 consisted primarily of NSGCT malignancies (`r clust_eval$clust_sizes %>% filter(clust_id == '#1', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples, mixed and teratoma subtypes) characterized by high expression of the pituitary hormones _PRL_ and _GNRH1_, _HSD17B2_ coding for sex hormone-deactivating enzyme, and _SRD5A1_ coding for a testosterone - DHT converting enzyme. 
+The largest hormonal cluster #2 (`r clust_eval$clust_sizes %>% filter(clust_id == '#2', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples) included predominantly seminomas and was hallmarked by high expression of the testosterone - DHT converting enzyme _SRD5A3_. 
+Hormonal cluster #3  comprised of NSGCT (`r clust_eval$clust_sizes %>% filter(clust_id == '#3', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of samples, mixed histology, embryonal carcinoma, yolk sac tumors) with high expression of _CGA_ gonadotropin subunit as well as genes involved in estrogen and estradiol synthesis and inter-conversion (_CYP19A1_, _HSD17B12_, _HSD17B1_), and _SHBG_ involved in hormone binding and transport. 
 Finally, `r clust_eval$clust_sizes %>% filter(clust_id == '#4', cohort %in% c('tcga', 'gse99420')) %>% .$percent %>% range %>% signif(2) %>% paste(collapse = ' to ')`% of cancer samples were classified as hormonal cluster #4, which consisted primarily of NSGCT (embryonal carcinoma, mixed histology, yolk sac) with a small fraction of seminomas. 
 The key feature of this cluster was increased expression of genes of general steroid (_STAR_, _POMC_, _CYP11A1_, _CYP17A1_, _HSD3B2_) and testosterone biosynthesis (_HSD17B3_) (__Figure \@ref(fig:fig-clusters)__, __Supplementary Figure S4__, __Supplementary Table S5__). 
 
-Concerning clinical and pathological features of the hormonal clusters, patients in clusters #1 and #3 were significantly younger as compared with the remaining hormonal clusters. 
+Concerning clinical and pathological features of the hormonal clusters, patients in clusters #1 and #3 were significantly younger as compared with the remaining individuals. 
 Stage I, serum marker-negative cancers were the most frequent in cluster #2, which is consistent with the predominant seminoma histology. 
 By contrast, S2/S3 and stage III cancers were the most common in cluster #3 (__Figure \@ref(fig:fig-clinic)A__, __Supplementary Table S6__). 
 Accordingly, cluster #2 and #3 patients exhibited, respectively, the best and poorest progression-free survival (`r filter(bcg_surv$test$pfs, comparison == 'global')$significance[1]`). 
-Analogical effects yet not significant effects were observed for relapse-free survival (`r filter(bcg_surv$test$rfs, comparison == 'global')$significance[1]`). 
+Analogical yet not significant effects were observed for relapse-free survival (`r filter(bcg_surv$test$rfs, comparison == 'global')$significance[1]`). 
 Hormonal cluster #1 patients were exposed to intermediate-to-high risk of progression and relapse. 
 Progression and relapse risk in cluster #4 was low-to-intermediate (__Figure \@ref(fig:fig-clinic)B__, __Supplementary Figure S5__). 
 
 In regularized multi-parameter modeling of progression-free survival by RIDGE Cox proportional hazard regression [@Simon2011; @Friedman2010], appending of canonical clinical risk factors (age, serum marker status, histological subtype) with the hormonal cluster information had virtually no effect on the model's accuracy (clinical explanatory factor model: C-index = `r bcg_glmcox$stats %>%  filter(model_type == 'clinical') %>% .$c_index %>% signif(2)`, clinical factors and hormonal clusters: C-index = `r bcg_glmcox$stats %>%  filter(model_type == 'full') %>% .$c_index %>% signif(2)`) but marginally improved its calibration (clinical factors: integrated Brier score [IBS] = `r bcg_glmcox$stats %>%  filter(model_type == 'clinical') %>% .$ibs_model %>% signif(2)`, clinical factors and hormonal clusters: `r bcg_glmcox$stats %>%  filter(model_type == 'full') %>% .$ibs_model %>% signif(2)`). 
-In the combined clinical/hormonal cluster model of progression-free survival, each of S2/S3 marker status, hormonal cluster #1 or #3 assignment, and teratoma histology, were independently associated with roughly 10% increase of progression risk (__Supplementary Figure S5__, _Supplementary Table S7__). 
+In the combined clinical/hormonal cluster model of progression-free survival, each of S2/S3 marker status, hormonal cluster #1 or #3 assignment, and teratoma histology, were independently associated with roughly 25 - 30% increase of progression risk (__Supplementary Figure S5__, _Supplementary Table S7__). 
 
 As predicted by immunedeconvolution of the gene expression data sets by xCell and MCP Counter algorithms [@Aran2017; @Becht2016], cluster #1 and, to a lesser extend, cluster #3, displayed significantly higher predicted fibroblast levels as compared with clusters #2 and #4. 
 In turn, cluster #2 cancers were predicted to be abundantly infiltrated by T and B cells. 
@@ -106,25 +106,25 @@ This points towards distinct biological phenotypes of the hormonal clusters.
 In more detail, extracellular matrix- (ECM) and growth factor signaling-related gene signature scores were the highest in cluster #1 followed by cluster #3. 
 Gene signatures of antigen processing, inflammatory signaling, apoptosis, and DNA repair demonstrated the highest levels in cluster #2. 
 Cluster #3 was characterized by elevated scores of signatures of FGFR/ERBB/PI3K/AKT, lipid metabolism, steroid hormone and estrogen metabolism. 
-Finally, fatty acid, nucleotide, sugar and androgen metabolism along with cell cycle, mitosis, RNA turnover, apoptosis and autophagy were inferred as the key biological processes primarily specific for cluster #4 (__Figure \@ref(fig:fig-biology)B__). 
+Finally, fatty acid, nucleotide, sugar and androgen metabolism along with cell cycle, mitosis, RNA turnover, apoptosis and autophagy were inferred as the key biological processes primarily for cluster #4 (__Figure \@ref(fig:fig-biology)B__). 
 
 The biological differences between the hormonal clusters were confirmed by an analysis of differential gene expression in particular hormonal clusters as compared with the respective mean gene expression in the TCGA and GSE99420 cohorts (__Supplementary Table S10__). 
 A total of `r bcg_dge$common_significant[c("#1.upregulated", "#1.downregulated")] %>% reduce(union) %>% length` genes were found to be differentially regulated in cluster #1 as compared with the data set mean in both investigated cohorts; the numbers of such common differentially regulated genes were 
 `r bcg_dge$common_significant[c("#2.upregulated", "#2.downregulated")] %>% reduce(union) %>% length`, 
 `r bcg_dge$common_significant[c("#3.upregulated", "#3.downregulated")] %>% reduce(union) %>% length`, 
 and `r bcg_dge$common_significant[c("#4.upregulated", "#4.downregulated")] %>% reduce(union) %>% length` for clusters #2, #3, and #4, respectively. 
-The top strongest upregulated genes shared by the TCGA and GSE99420 collective included _SULT1E1_, a gene coding for sex hormone sulfonylating enzyme, genes of keratins (_KRT5_, _KRT17_), retinoid transporter (_TTR_), a transcription factor co-regulating the estrogen-responsive transcriptome (_FOXA1_), and major ECM components (_COL2A1_, _ELN_). 
-Gene coding for a testis-specific antigens (_PRAME_, _LUZP4_), testis-specific signaling/transcription mediators (_TCL1B_, _RNF17_, _EZHIP_), RNA binding proteins (_CPEB1_, _LUZP4_) were found among the top activated genes in cluster #2. 
+The top strongest upregulated genes in cluster #1 shared by the TCGA and GSE99420 collective included _SULT1E1_, a gene coding for sex hormone sulfonylating enzyme, genes of keratins (_KRT5_, _KRT17_), retinoid transporter (_TTR_), a transcription factor co-regulating the estrogen-responsive transcriptome (_FOXA1_), and major ECM components (_COL2A1_, _ELN_). 
+Gene coding for testis-specific antigens (_PRAME_, _LUZP4_), testis-specific signaling/transcription mediators (_TCL1B_, _RNF17_, _EZHIP_), RNA binding proteins (_CPEB1_, _LUZP4_) were found among the top activated genes in cluster #2. 
 Genes strongly up-regulated in cluster #3 included _AFP_ coding for the testicular cancer marker alpha-fetoprotein, apolipoproteins, lipases and lipoprotein receptors (_APOB_, _APOA2_, _APOA4_, _APOC3_, _PLA2G12B_, _LRP2_), proteases, protease inhibitors and protease receptors (_CST1_, _CCKBR_, _CTSE_), ECM components (_AHSG_, _FGB_, _VTN_, _GPC_), 
 retinoid transporter (_TTR_), and ketone metabolism protein gene (_HMGCS2_). 
 The top regulated features in cluster #4 as compared with the cohort mean comprised genes participating in development (_ARX_, _DLK1_), cell cycle in the testis and spermatogenesis (_PRM2_, _CCNA1_, _FATE1_, _TAF7L_, _CATSPERZ_), post-transcriptional expression regulation (_PIWIL3_), and pituitary hormone secretion (_INHA_) (__Supplementary Figure S7__). 
 
 Biological process gene ontology (GO) enrichment analysis was performed for sets of differentially up- or down-regulated genes in particular clusters [@Young2010] (__Supplementary Table S11__). 
 Next, GO terms found to be significantly enriched in the TCGA and GSE99420 cohort were grouped by their semantic similarity in respect to Wang distances [@Yu2020; @Yu2010]. 
-Such analysis revealed regulation of genes and biological processes of RNA turnover, organ development, reproduction, proliferation, ECM and mesenchymal cells phenotype in cluster #1. 
+Such analysis revealed regulation of genes and biological processes of RNA turnover, organ development, reproduction, proliferation, ECM and mesenchymal cell phenotype in cluster #1. 
 GO terms related to ECM, lipoprotein metabolism, TGF/BMP/WNT signaling, cell adhesion and motility, transcription, organ and tissue development were found significantly enriched among genes up- and downregulated in cluster #2. 
 GO terms significantly enriched in cluster #3 were associated with organ, sex and mesenchymal differentiation, blood coagulation, growth factor and NOTCH/WNT signaling, wound healing, adhesion and motility (__Supplementary Figure S8__). 
-Of note, we could not identify significantly enriched biological process GO term in cluster #4 shared by the TCGA and GSE99420 cohort. 
+Of note, we could not identify significantly enriched biological process GO terms in cluster #4 shared by the TCGA and GSE99420 cohort. 
 
 A subsequent comparison of activity of transcriptional regulons [@Muller-Dott2023; @Badia-I-Mompel2022] (__Supplementary Table 12__), i.e. set of genes regulated by common transcription factors, in the hormonal clusters as compared with the cohort means revealed activity of SMAD1/3-, CTNNB1-, and HIF1A-responsive transcriptome participating among others in ECM deposition, WNT signaling, and hypoxia response in cluster #1. 
 REST, CIITA, MECP2, and HOXA2 regulons associated with neural and embryonal development and inflammation were found to be significantly activated in both the TCGA and GSE99420 cohort. 
@@ -139,8 +139,8 @@ Immune cell infiltration and inflammatory processes were found to differ between
 In line with increased infiltration of cluster #2 cancers by T cells, clinically relevant immune checkpoint genes _CTLA4_, _TIGIT_, and _PDCD1_ were found to be expressed in this cluster at the highest levels (__Supplementary Figure S9__). 
 
 Cancer and testis antigens (CTA) represented a highly prominent group of genes significantly differentially regulated between the hormonal clusters. 
-Out of `r length(bcg_cta$genes)` CTA genes reported in literature [@Wang2016; @CTpedia], `r length(bcg_cta$genes)` transcripts were expressed at significantly different levels in the hormonal clusters in both the TCGA and GSE99420 cohort. Interestingly, a vast majority of those common regulated CTA transcript exhibited the highest expression levels in cluster #2 followed by cluster #4. 
-By contrast, only few CTA genes were found upregulated in cluster #3 (__Supplementary Figure S10__). 
+Out of `r length(bcg_cta$genes)` CTA genes reported in literature [@Wang2016; @CTpedia], `r length(unique(unlist(bcg_cta$common_significant)))` transcripts were expressed at significantly different levels in the hormonal clusters in both the TCGA and GSE99420 cohort. Interestingly, a vast majority of those common regulated CTA transcript exhibited the highest expression levels in cluster #2 followed by cluster #4. 
+By contrast, only few CTA genes were found to be upregulated in cluster #3 (__Supplementary Figure S10__). 
 This may suggest a normal tissue-like testicular differentiation of cluster #2 seminomas and, in part, cluster #4 malignancies, and extensive de-differentiation of cluster #1 and cluster #3 tumors. 
 This may also reflect high immunogenicity of cluster #2 cancers in line with their T and B cell rich tumor microenvironment [@Raza2020]. 
 
@@ -157,18 +157,18 @@ _ESR2_ was expressed predominantly abundantly by cluster #2 and #4 cancers.
 _AR_ was expressed significantly higher in clusters #1, #2, and #4 than by cluster #3 tumors (__Supplementary Figure S11B__). 
 Out of `r length(bcg_estro$genes)` published high confidence estrogen responsive genes [@Li2023], `r length(unique(unlist(bcg_estro$common_significant)))` were found to be significantly differentially regulated between the hormonal clusters in both the TCGA and GSE99420 cohorts. 
 The majority of those common regulated estrogen-responsive genes was expressed in clusters #1 and #3 at the highest levels (__Supplementary Figure S12A__). 
-Among `r length(bcg_andro$genes)` genes, mRNA levels of `r length(unique(unlist(bcg_andro$common_significant)))` of them differed significantly between the hormonal clusters in both analyzed cohorts. 
+Among `r length(bcg_andro$genes)` genes [@Massie2011], mRNA levels of `r length(unique(unlist(bcg_andro$common_significant)))` of them differed significantly between the hormonal clusters in both analyzed cohorts. 
 Most of them peaked in clusters #1, #3, and #4, but a prominent group of such common differentially regulated androgen-responsive genes was highly specific for cluster #2 as well (__Supplementary Figure S12B__). 
 Collectively, the results of the analysis of differential gene expression gonadotropin and sex hormone genes, and estrogen- and androgen-regulated transcriptomes suggest that the FSH - estrogen axis may be active in testicular cancers assigned to hormonal clusters #1 and #3. 
 Analogically, co-expression of the major testosterone regulator LH receptor and genes involved in steroidogenesis and testosterone synthesis indicate that the LH - testosterone circuit may be functional in cluster #4 testicular tumors. 
 
-Extensive infiltration o by fibroblasts and ECM deposition in cluster #1 and, to a lesser extent, in cluster #3 were inferred from the immunedeconvolution data, gene set variation analysis of Reactome pathways, and GO enrichment analysis. 
+Extensive infiltration by fibroblasts and ECM deposition in cluster #1 and, to a lesser extent, in cluster #3 were inferred from the immunedeconvolution data, gene set variation analysis of Reactome pathways, and GO enrichment analysis. 
 We intended to investigate modulation of matrisome, i.e. genes coding for structural proteins of ECM, ECM regulators, and ECM-associated secreted factors [@Naba2012; @Petrov2023], between the hormonal clusters. 
 Out of `r length(bcg_ecm$genes)` matrisome genes available for analysis, `r length(unique(unlist(bcg_ecm$common_significant)))` were found to be significantly differentially regulated between the hormonal clusters in the TCGA and GSE99420 cohort. 
 As shown in __Supplementary Figure S13__, sizable fractions of collagens (e.g. _COL1A1_, _COL3A1_, _COL5A1_), ECM glycoproteins (e.g. laminins and elastin), and proteoglycans (e.g. _DCN_, _OGN_) were found to be strongly upregulated in cluster #1. 
 By contrast, only few matrisome transcripts were found abundantly expressed in cluster #2. 
 Fibrinogen chain-coding transcripts (_FGA_, _FGB_, _FGG_) as well as transcripts of ECM regulators, e.g. proteases and protease inhibitors (serpins, _ADAMTS18_) were expressed in cluster #3 at highest levels followed by cluster #1. 
-Among few matrisome transcript specific for cluster #4, secreted factors such as _CSH1_, _GDF3_, _FGF2_, _FGF4_, and _IL23_ involved in prolactin, growth factor, and inflammatory signaling, constituted the largest gene set (__Supplementary Figure S13__). 
+Among few matrisome transcripts specific for cluster #4, secreted factors such as _CSH1_, _GDF3_, _FGF2_, _FGF4_, and _IL23_ involved in prolactin, growth factor, and inflammatory signaling, constituted the largest gene set (__Supplementary Figure S13__). 
 
 Activity of RECON2 model metabolic reactions in the hormonal clusters as compared with the respective cohort averages was assessed by a Monte Carlo algorithm provided with differential expression estimates and errors for all available genes [@Gavai2015; @King2016] (__Supplementary Table S14__). 
 To assess activation or inhibition of metabolic pathways, we analyzed enrichment of RECON metabolic subsystems with significantly activated and inhibited reactions in particular clusters (__Supplementary Table S15__). 
@@ -177,7 +177,7 @@ In cluster #2, transport-related subsystems, folate and vitamin E turnover were 
 For cluster #3, the enrichment analysis predicted an activation of androgen and estrogen metabolism, fatty acid synthesis, extracellular transport, and methionine and cysteine metabolism. 
 In turn, sugar catabolism and oxidative energy metabolism pathways were predicted to be significantly inhibited. 
 In cluster #4, metabolic subsystems of nucleotide salvage, steroid, pyruvate, and eicosanoid turnover were predicted to be activated, while cytochrome, sphingolipid, and fatty acid oxidation were estimated to be suppressed (__Supplementary Figure S14__). 
-In a targeted analysis of citric acid cycle, we could observe a sustained inhibition of multiple reactions of the pathway in clusters #1 and #3; solely isocitrate dehydrogenase reactions were predicted to be activated in these hormonal clusters. In a similar analysis of oxidative phosphorylation, mitochondrial complexes I, III, and IV were found to be significantly inhibited in hormonal clusters #1, #2, and #3 as compared with the respective cohort average. 
+In a detailed analysis of citric acid cycle, we could observe a sustained inhibition of multiple reactions of the pathway in clusters #1 and #3; solely isocitrate dehydrogenase reactions were predicted to be activated in these hormonal clusters. In a similar analysis of oxidative phosphorylation, mitochondrial complexes I, III, and IV were found to be significantly inhibited in hormonal clusters #1, #2, and #3 as compared with the respective cohort average. 
 This inhibition was the largest in cluster #1. 
 In turn, in cluster #4 only complexes I and II were predicted to be inhibited (__Supplementary Figure 15__). 
 Collectively, for clusters #1 and #3, a general suppression of oxidative sugar metabolism via citric acid cycle and oxidative phosphorylation can be inferred. 
@@ -190,7 +190,7 @@ In cluster #4, the modeling data revealed an increased activity of general stero
 Furthermore, the testosterone synthesis reaction catalyzed by HSD17B3 was found activated, while the sex hormone inactivating reactions HSD17B2 and HSD17B8 were predicted to be inhibited. 
 This suggests functionality of steroid and male hormone production pathways specifically in cluster #4 testicular cancers (__Supplementary Figure S16__). 
 
-For the TCGA cohort cancer samples, levels of `r nrow(tcga$protein_annotation)` proteins of relevance for cancer biology were measured by a reverse phase protein array [@Liu2018]. 
+For the TCGA cohort cancer samples, levels of `r nrow(bcg_protein$anova)` proteins of relevance for cancer biology were measured by a reverse phase protein array [@Liu2018]. 
 Among them, `r length(unique(unlist(bcg_protein$significant)))` were found to be significantly differentially regulated in at least one hormonal clusters as compared with the respective whole data set average expression (__Supplementary Table S16__). 
 Specifically in clusters #1 and #3, active phosphorylated forms of SRC and YAP were upregulated. 
 Of interest, this signaling axis was demonstrated to integrate signals from HIPPO, WNT, and growth signaling pathways and drive lung cancer progression [@Lamar2019; @Hsu2020]. 
@@ -201,17 +201,17 @@ The negative regulator of hypoxia response VHL, protease inhibitor SEPRINE1, and
 
 Elevated expression of proteins and phosphoproteins of downstream of EGFR/ERBB in cluster #3 and, in particular, in cluster #1 suggests EGFR/ERBB, SRC, c-RAF/MAPK, and PI3K/AKT/mTOR/RICTOR signaling as a major tumor-promoting circuits of these cancers. 
 Those signaling pathways may be also responsible for downregulation of the pro-apoptotic BIM and BAX proteins [@Alam2022] in clusters #1 and #3. 
-Of note, in cluster #2, B-RAF, C-RAF, and mTOR proteins were upregulated despite suppression of activated forms of ERBB2 and EGFR, which may suggest an alternative mode of activation of mTOR signaling. 
+Of note, in cluster #2, B-RAF, C-RAF, and mTOR proteins were upregulated despite suppression of activated forms of ERBB2 and EGFR, which may suggest an alternative mode of activation of mTOR and MAPK signaling, e.g. by KIT [@Cardoso2017]. 
 Cluster #2 was also characterized by significant upregulation of pro-apoptotic BIM and BAX proteins (__Supplementary Figure S17__). 
 In general, upregulation of of multiple DNA damage sensors and apoptosis activators at protein levels in cluster #2 is congruent with the Reactome pathway gene signature analysis results, and may reflect predisposition of those cancers to cell death inducing signals and anti-cancer treatment.
 
 An analysis of co-expression of proteins in the hormonal clusters #1 and #3 of TCGA testicular cancers underline the relevance of EGF/ERBB, MAPK and AKT/mTOR signaling pathways, whose members were identified as prominent hubs of communities of co-regulated proteins. 
 Interestingly, diverse isoforms of PKC, p38, and JNK were found to be hub proteins in clusters #2 and #4, which may indicate their roles in fueling progression of those testicular cancers. 
 Furthermore, ER-alpha, its phosphorylated form ER-alpha pS118, and AR were also put forward as highly connected proteins i all hormonal clusters (__Supplementary Figures S18__ and __S19__). 
-This finding delivers another piece of evidence of functionality and relevance of sex hormone signaling in testicular cancer. 
+This later finding delivers another piece of evidence of functionality and relevance of sex hormone signaling in testicular cancer. 
 
 No significant differences in total mutation burdens, numbers of mutations in protein-coding genes, and gene amplifications were observed in the hormonal subsets of TCGA cancer samples. 
-In turn, significantly higher microsatellite instability scores as well as increased numbers of gene deletions were detected in clusters #1 and #3. 
+In turn, significantly higher microsatellite instability scores as well as increased numbers of gene deletions were detected in clusters #1 and #3 as compared with clusters #2 and #4. 
 Effect size of those differences was moderate-to-large (__Supplementary Figure S20__, __Supplementary Table S17__). 
 
 Somatic mutations of _KIT_, _KRAS_, and _NRAS_ genes were the most frequent in cluster #2, and basically absent in clusters #1 and #3; this effect was significant for the _KIT_ gene. 
@@ -229,17 +229,17 @@ P values of those two tests were corrected for multiple testing with the false d
 Differential drug response was considered for pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05, which translates to moderate-to-strong significant differences between the clusters and significant differences between the mean response in the clusters and the cohort mean. 
 Among the GDSC-trained data, predicted responses to `r length(unique(unlist(bcg_drugs$common_significant$gdsc)))` compounds differed between the hormonal clusters of the TCGA and GSE99420 cohorts. 
 For the CTRP2-trained predictions, differential response to `r length(unique(unlist(bcg_drugs$common_significant$ctrp2)))` compounds was observed in both collectives (__Supplementary Table S19__). 
-Independently of the training data, resistance of cluster #1, and , to a lesser extend cluster #3 cancers, were predicted to be resistant against numerous 
+Independently of the training data, cluster #1, and , to a lesser extend cluster #3 cancers, were predicted to be resistant against numerous 
 compounds interfering with DNA synthesis (e.g. folate anti-metabolites: pemetrexed, metothrexate, telomerase inhibitors: MST-312, Telomerase Inhibitor IX), 
-cytoskeleton and cell cycle (e.g. vinblastine, taxane drugs, cell cycle checkpoint inhibitors: rigosertib, BI-2536, MK-1775, PHA-793887, SNS-032, alvocidib), 
+cytoskeleton and cell cycle (e.g. vinblastine, taxane drugs, cell cycle checkpoint inhibitors: rigosertib, BI-2536, MK-1775, PHA-793887, SNS-032, alvocidib), and 
 epigenetics (belinostat, entinostat). 
-Cluster #2 and #3 malignancies were predicted to be, respectively, highly and moderately responsive to those class of drugs. 
-The best response to apoptosis modulators, e.h. obatoclax, venetoclax, PAC-1 or BRD-K35604418', was predicted for cluster #2, while in clusters #1, #3, and #4, resistance is expected. 
+Cluster #2 and #4 malignancies were predicted to be, respectively, highly and moderately responsive to those class of drugs. 
+The best response to apoptosis modulators, e.g. obatoclax, venetoclax, PAC-1 or BRD-K35604418, was predicted for cluster #2, while resistance to those substances was predicted for clusters #1, #3, and #4. 
 Of note, this later phenomenon fits well to the increased expression of DNA damage sensors and pro-apoptotic proteins by cluster #2 cancers at both mRNA and protein level. 
 In line with the highly active receptor tyrosine kinase and growth factor signaling, clusters #1 and #3, were estimated to respond well towards tyrosine kinase inhibitors (TKI) such as 
 multi-TKI- and SRC-targeting ponatinib, dasatinib and saracatinib, 
 VEGFR-targeting cabozantinib, foretinib and tivozanib, 
-FGFR inhibitors AZD4547 and PD173074 and , or 
+FGFR inhibitors AZD4547 and PD173074, or 
 EGFR/ERBB inhibitors neratinib and cetuximab. 
 Cluster #2 tumors were in turn predicted to be resistant to such compounds (__Figure \@ref(fig:fig-drugs)__, __Supplementary Figure S22__). 
 
@@ -247,12 +247,87 @@ Cluster #2 tumors were in turn predicted to be resistant to such compounds (__Fi
 
 # Methods
 
+Bioinformatic and statistics analyses and visualizations were done with R version 4.2.3. 
+For detailed information on methods and software, please refer to Supplementary Material. 
+
+## Data sources
+
+Publicly available TCGA (source: [cBioportal](https://www.cbioportal.org/), total cancers: n = `r nrow(tcga$expression)`, seminoma: `r get_percent(tcga$clinic, 'histology')['seminoma']`, nonseminomatous germ cell tumor [NSGCT]: `r get_percent(tcga$clinic, 'histology')['NSGCT']` of samples) [@Liu2018] and 
+GSE99420 (source: [GEO](https://www.ncbi.nlm.nih.gov/geo/), total cancers: n = `r nrow(gse99420$expression)`, seminoma: `r get_percent(gse99420$clinic, 'histology')['seminoma']`, nonseminomatous germ cell tumor [NSGCT]:  `r get_percent(gse99420$clinic, 'histology')['NSGCT']`) or samples) transcriptomic study collectives were analyzed in the current report. 
+For the TCGA cohort detailed information of demographics, clinical features, histology and tumor pathology, and survival were provided along with RNA sequencing gene expression quantification, protein quantification results by reverse phase protein array, somatic mutations, gene amplifications and deletions [@Liu2018]. 
+For the GSE99420 cohort, information of cancer histology (seminoma/NSGCT) and presence of relapse was provided together with transcriptome measurements with an Illumina microarray platform. 
+Characteristic of the cohorts is provided in __Table \@ref(tab:tab-cohorts)__. 
+
+Normalized, $log_2$-transformed expression data for genes and proteins provided by authors were used in analyses. 
+Sex hormone-related genes used for characteristic and classification of testicular cancers consisted of genes coding for pituitary gonadotropins, and genes involved in steroid biosynthesis, inter-conversion, transport and catabolism of estrogens and androgens. 
+Those genes were extracted from ['Metabolism of steroid hormones'](https://reactome.org/content/detail/R-HSA-196071), ['Estrogen biosynthesis'](https://reactome.org/content/detail/R-HSA-193144), and ['Androgen biosynthesis'](https://reactome.org/content/detail/R-HSA-193048) Reactome pathways and are listed in __Table \@ref(tab:tab-genes)__. 
+$log_2$ mRNA levels of the sex-hormone genes were adjusted for the cohort/batch effect with the ComBat algorithm [@Leek2012] prior to differential gene expression, co-regulation, and clustering analyses.
+
+Based on whole-transcriptome gene expression, predictions of anti-cancer drug response in form of log IC50 and AUC (are under the dose-response curve) were made by RIDGE linear regression models [@Maeser2021; @Geeleher2014; @Friedman2010] provided by R package [_htGLMNET_](https://github.com/PiotrTymoszuk/htGLMNET) and trained with results of in vitro drug screening experiments GDSC [@Yang2013] and CTRP2 [@Seashore-Ludlow2015]. 
+Estimates of non-malignant cell contents in cancer specimens were computed by _QuanTIseq_, _xCell_, and _MCP Counter_ immunedeconvolution algorithms [@Finotello2019; @Aran2017; @Becht2016]. 
+Single sample gene set enrichment analysis scores (ssGSEA scores) were computed for Reactome pathway gene signatures (source: [MSig database](https://www.gsea-msigdb.org/gsea/msigdb/index.jsp), version 7.5.1) with the _GSVA_ algorithm [@Hanzelmann2013]. 
+
+Cancer and testis antigen genes, estrogen- and androgen-responsive genes were extracted from [CTpedia database](http://www.cta.lncc.br/) and literature reports [@Wang2016; @CTpedia; @Li2023; @Massie2011]. 
+Annotation and classification of matrisome genes, i.e. features coding for proteins of extracellular matrix (ECM), was done with _MatrisomeAnalyzeR_ R package [@Naba2012; @Petrov2023]. 
+Other genes of interest were manually searched in the [NCBI Gene database](https://www.ncbi.nlm.nih.gov/gene/). 
+
+## Statistical analysis
+
+Descriptive statistics presented for numeric variables are medians, interquartile ranges, ranges and numbers of complete observations. 
+For qualitative variables, percentages and counts of observations in the categories are presented. 
+Statistical significance for differences in numeric variables between strata were investigated by two-tailed T tests, Mann-Whitney tests, Kruskal-Wallis tests, and one-way ANOVA with Cohen's d, r and $\eta^2$ effect size statistics. 
+Statistical significance for differences in distribution of categories of categorical variables between strata was determined by $\chi^2$ test with Cramer's V effect size statistics.
+P values were adjusted for multiple comparisons with the false discovery rate (FDR) method [@Benjamini1995] separately for the analysis step and cohort. 
+If not indicated otherwise, effects with FDR-adjusted p values < 0.05 were considered significant.
+
+## Clustering
+
+Cancer samples in the TCGA training cohort were assigned to 'hormonal clusters' in respect to ComBat-adjusted $log_2$-transformed expression of the sex-hormone related genes by the hard-threshold regularized KMEANS algorithm [@Raymaekers2022]. 
+Choice of the cluster number (k = 4) was motivated by the maximum of mean silhouette width, i.e. a metric of cluster separation [@Rousseeuw1987]. 
+Assignment of cancer specimens in the GSE99420 test cohort to the hormonal clusters was accomplished with a Random Forest classifier [@Wright2017; @Breiman2001] employing ComBat-adjusted $log_2$-transformed mRNA levels of the cluster-defining sex hormone-related genes. 
+
+Quality control of this semi-supervised clustering included comparison of cluster size distribution in the training and test cohort, analysis of pairwise distances between observations in the clusters, and comparison of expression levels of the cluster-defining genes between the hormonal clusters. 
+
+## Differential gene and protein expression, predicted drug response in the clusters
+
+Due to strongly non-normal distribution of some sex hormone-related mRNAs, differential expression of the sex hormone-related genes in tumor histologies was assessed by non-parametric Mann-Whitney (effect size: r) and Kruskal-Wallis tests (effect size: $\eta^2$). 
+
+Differences of $log_2$-transformed gene expression (TCGA and GSE99420), $log_2$-transformed protein levels (TCGA), and predicted drug response metrics (IC50 and AUC, TCGA and GSE99420) between the hormonal clusters were explored with a two step procedure. 
+First, the difference between the hormonal clusters was assessed by one-way ANOVA with $\eta^2$ effect size statistic (function `test_anova`, package [_microViz_](https://github.com/PiotrTymoszuk/microViz)). 
+Second, the difference between the cluster mean of a gene, protein, or sensitivity metric and the respective mean value in the entire cohort was investigated by one-sample T test (function `avg_deviation()`, package [_microViz_](https://github.com/PiotrTymoszuk/microViz)). 
+Features with pFDR(ANOVA) < 0.05, $\eta^2 \geq$ 0.14, and pFDR(T test) < 0.05 were considered significantly differentially regulated. 
+
+## Demographic, clinical, pathological, and tumor microenvironment characteristic of the hormonal clusters
+
+Differences in demographic and clinical features, and estimates of non-malignant cell content between the hormonal clusters were investigated by Kruskal-Wallis and $\chi^2$ tests with $\eta^2$ and Cramer's V effect size statistics. 
+Differences in relapse- and progression-free survival between the hormonal clusters of the TCGA cohort were assessed by Kaplan-Meier analysis and Peto-Peto tests. 
+Multi-parameter modeling of progression-free survival was accomplished by regularized RIDGE Cox regression [@Simon2011; @Friedman2010]. 
+
+## Reactome pathways, GO enrichment, regulons, signaling pathway, and metabolic reaction analysis
+
+ssGSEA scores of Reactome pathway gene signatures were compared between the hormonal clusters by one-way ANOVA with $\eta^2$ effect size statistic. 
+Gene signatures differing between the clusters with moderate-to-large effect size, i.e. with pFDR < 0.05 and $\eta^2 \geq 0.14$, were considered significant. 
+
+Biological process gene ontology (GO) term enrichment for genes found to be differentially regulated between the hormonal clusters was explored by a modified _goana_ algorithm [@Young2010]. 
+For semantic clustering of GO terms found to be significantly enriched in both the TCGA and GSE99420 cohort, a modified implementation of the _GOSemSim_ algorithm [@Yu2020; @Yu2010] was utilized. 
+
+Activity of transcriptional regulons and signaling pathways of the _collecTRI_ and _PROGENy_ knowledge models was compared between the hormonal clusters by linear modeling tools of the _decoupleR_ package [@Muller-Dott2023; @Badia-I-Mompel2022; @Schubert2018] operating with T statistics of whole-transcriptome differential gene expression. 
+Activity of RECON2 metabolic reactions in the hormonal clusters was assessed by Monte Carlo simulations fed with $log_2$ fold-regulation estimates of differential expression and their standard error obtained for all available genes (R package [_biggrExtra_](https://github.com/PiotrTymoszuk/biggrExtra)) [@Gavai2015; @King2016]. 
+Enrichment of RECON metabolic subsystems with significantly activated and inhibited reactions was assessed by comparing the regulated reactions sets with random draws from the entire reaction pool. 
+
+## Co-regulation networks
+
+Co-regulation of sex hormone-related genes (TCGA and GSE99420) or proteins (TCGA) was investigated by pairwise Spearman's $\rho$ and Pearson's r correlation coefficients. 
+Matrices of correlations selected by correlation coefficient cutoffs (genes: $\rho \geq$ 0.3, proteins: r $\geq$ 0.5) were converted to graph objects and analyzed as networks. 
+Graph node importance statistics (degree, betweenness, hub score) and node communities were explored by _igraph_ package tools [@Csardi2006]. 
+Networks were visualized with _ggnetwork_ R package [@Briatte2021].
+
 \newpage
 
 # Data and code availability
 
 Data from publicly available sources were analyzed. 
-The R analysis pipeline is available as a [GitHub repository](https://github.com/PiotrTymoszuk/TesCa TCGA)
+The R analysis pipeline is available as a [GitHub repository](https://github.com/PiotrTymoszuk/TesCA-hormones).
 
 \newpage
 
@@ -329,7 +404,7 @@ figs$clinic$plot
 
 __Figure \@ref(fig:fig-clinic). Clinical and prognostic characteristic of the hormonal clusters of testicular cancer.__ 
 
-_(A) Differences in age at diagnosis (Kruskal-Wallis test, $\eta^2$ effect size statistic), and tumor stage and serum cancer marker status ($\chi^2$ test, Cramer's V effect size statistic) were compared between the clusters. P values were corrected for multiple testing with the false discovery rate method. Median age with interquartile ranges is shown in a box plot with whiskers spanning over 150% of the interquartile ranges and single cancer samples visualized as points. Percentages of tumor stages and patients with cancer marker stages in the hormonal clusters are presented in stack plots. Effect sizes and p values are displayed in the plot captions. Numbers of samples in the clusters are indicated in the X axes._
+_(A) Age at diagnosis (Kruskal-Wallis test, $\eta^2$ effect size statistic), tumor stage and serum cancer marker status ($\chi^2$ test, Cramer's V effect size statistic) were compared between the clusters. P values were corrected for multiple testing with the false discovery rate method. Median age with interquartile ranges is shown in a box plot with whiskers spanning over 150% of the interquartile ranges and single cancer samples visualized as points. Percentages of tumor stages and patients with cancer marker stages in the hormonal clusters are presented in stack plots. Effect sizes and p values are displayed in the plot captions. Numbers of samples in the clusters are indicated in the X axes._
 
 _(B) General and pairwise differences in progression-free survival between the hormonal clusters were assessed by Peto-Peto tests adjusted for multiple testing with the false discovery rate method. Fractions of surviving patients are visualized in a Kaplan-Meier plot with total numbers of observations and progressions indicated in the plot caption (right panel). Number of observations and progression cases in the hormonal clusters are displayed in the Kaplan-Meier plot legend; p values for the general difference in survival is shown in the plot. P values of the pairwise comparison of survival between the hormonal clusters are displayed in a heat map (left panel)._
 
@@ -363,7 +438,7 @@ _Differential modulation of the collecTRI model transcriptional regulons and of 
 
 _(A) LM scores for top strongest modulated transcriptional regulons in the hormonal clusters (horizontal facets) found to be significant in both the TCGA and GSE99420 cohorts presented in bar plots._
 
-_(B) LM scores for signaling pathways in the the hormonal clusters found to be significantly modulated both in the TCGA and GSE99420 cohorts depicted in bubble plots. Pint sizes represent absolute values of the LM scores. Point color codes for regulation sign. Points are labelled with the corresponding LM score values._
+_(B) LM scores for signaling pathways in the hormonal clusters found to be significantly modulated both in the TCGA and GSE99420 cohorts depicted in bubble plots. Point sizes represent absolute values of the LM scores. Point color codes for regulation sign. Points are labelled with the corresponding LM score values._
 
 \newpage
 
@@ -379,7 +454,7 @@ _Expression of `r nrow(bcg_protein$anova)` cancer biology-relevant proteins was 
 
 _(A) Differences in $log_2$ expression between the cluster mean and the cohort mean along with FDR-adjusted p values of the T test are presented in Volcano plots. Each point represents a single gene. Point color codes for significance and regulation sign. Top most strongly regulated genes are labeled with their symbols. Numbers of significantly up- and downregulated proteins are displayed in the plot captions:_
 
-_(B) $log_2$-transformed expression levels of selected proteins discriminating between the hormonal clusters. Median $log_2$ expression values with interquartile ranges are shown as boxes with whiskers spanning over 150% of the interquartile ranges. Cancer samples are visualized as points. Effect sizes and p values for comparison of the clusters with one-way ANOVA are displayed in the plot caption. Numbers of samples in the clusters are indicated in the X axis._
+_(B) $log_2$-transformed expression levels of selected proteins discriminating between the hormonal clusters. Median $log_2$ expression values with interquartile ranges are shown as boxes with whiskers spanning over 150% of the interquartile ranges. Cancer samples are visualized as points. Effect sizes and p values for comparison of the clusters with one-way ANOVA are displayed in the plot caption. Numbers of samples in the clusters are indicated in the X axes._
 
 \newpage
 
@@ -391,7 +466,7 @@ figs$drugs$plot
 
 __Figure \@ref(fig:fig-drugs). Predicted anti-cancer drug response in the hormonal clusters.__ 
 
-_Anti-cancer drug response in form of log50 IC50 (50% inhibitory concentration) in cancer samples was predicted by RIDGE linear models trained with the GDSC drug screening data set. The log IC50 values were compared between the hormonal clusters by one-way ANOVA with $\eta^2$ effect size statistic. Differences in the log IC50 values between the cluster and the cohort mean were assessed by one-sample T test. P values were corrected for multiple testing with the false discovery rate (FDR) method. Compounds with pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05 were considered significant._
+_Anti-cancer drug response in form of log50 (50% inhibitory concentration) in cancer samples was predicted by RIDGE linear models trained with the GDSC drug screening data set. The log IC50 values were compared between the hormonal clusters by one-way ANOVA with $\eta^2$ effect size statistic. Differences in the log IC50 values between the cluster and the cohort mean were assessed by one-sample T test. P values were corrected for multiple testing with the false discovery rate (FDR) method. Compounds with pFDR(ANOVA) < 0.05, $\eta^2 \geq 0.14$, and pFDR(T test) < 0.05 were considered significant._
 
 _(A) Normalized log IC50 values (Z-scores) of compounds found to be significant in both the TCGA and GSE99420 cohort are presented in heat maps. The compounds are arranged by their peak expression in the hormonal clusters of the TCGA cohort. Compound classification is color coded in the vertical rug plot._
 

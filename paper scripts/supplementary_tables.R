@@ -158,7 +158,7 @@
                             'estimated by the QuanTIseq, xCell, and MCP Counter',
                             'algorithms.',
                             'Differences in the predicted cell levels between',
-                            'the clusters between the clusters were investigated',
+                            'the clusters were investigated',
                             'by Kruskal-Wallis test with eta-square effect size',
                             'statistic.',
                             'P values were corrected for multiple tesing with',
@@ -593,7 +593,7 @@
   suppl_tabs$drugs <- suppl_tabs$drugs %>%
     mdtable(label = 'drugs',
             ref_name = 'drugs',
-            caption = paste('Drug response in for of log IC50 and area under',
+            caption = paste('Drug response in form of log IC50 and area under',
                             'response curve (AUC) was predicted for cancer',
                             'samples by whole-transcriptome RIDGE linear models',
                             'trained with the CTRP2 and GDSC drug screening',

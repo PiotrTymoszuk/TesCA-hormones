@@ -287,7 +287,7 @@
                 theme(legend.position = 'bottom',
                       legend.box = 'vertical'),
               bcg_glmcox$coef_plots$full +
-                scale_x_continuous(limits = c(-0.05, 0.15)) +
+                scale_x_continuous(limits = c(-0.1, 0.36)) +
                 theme(legend.position = 'bottom'),
               ncol = 2,
               align = 'h',
@@ -695,13 +695,22 @@
   suppl_figs$gf_signaling <-
     plot_grid(bcg_protein$detail_plot +
                 scale_x_continuous(limits = c(-1, 1)) +
-                theme(legend.position = 'bottom')) %>%
+                theme(legend.position = 'none'),
+              get_legend(bcg_protein$detail_plot +
+                           guides(fill = 'none',
+                                  color = 'none') +
+                           theme(legend.position = 'bottom')),
+              get_legend(bcg_protein$detail_plot +
+                           guides(size = 'none') +
+                           theme(legend.position = 'bottom')),
+              nrow = 3,
+              rel_heights = c(0.9, 0.05, 0.05)) %>%
     as_figure(label = 'clusters_growth_factor_signaling_proteins',
               ref_name = 'gf_signaling',
               caption = paste('Regulation of growth factor pathway signaling',
                               'proteins in the hormonal clusters.'),
               w = 180,
-              h = 210)
+              h = 230)
 
 # Protein networks --------
 
