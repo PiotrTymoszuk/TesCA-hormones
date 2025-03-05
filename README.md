@@ -40,7 +40,7 @@ source('exec.R')
 
 ## Terms of use
 
-The pipeline results will be included in a future publication. To reference and use analysis results, please cite our GitHub repository and, if available, the publication. 
+To reference and use analysis results, please cite our GitHub repository and [our publication (DOI: 10.1186/s12610-025-00254-5)](https://pubmed.ncbi.nlm.nih.gov/40011822/). 
 
 ## Contact
 
